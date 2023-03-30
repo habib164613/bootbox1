@@ -20,7 +20,7 @@ class StudentController extends Controller
     public function index()
 
     {
-        $data['students']= Student::all();
+        $data['students']= Student::paginate(3);
         return view('student.index',$data);
     }
 
@@ -178,4 +178,13 @@ class StudentController extends Controller
         
        
     }
+
+      // pagination
+      public function pagination()
+      {
+       
+        $data['students'] = Student::paginate(3);
+         return view('student.pagination',$data);
+      }
+  
 }

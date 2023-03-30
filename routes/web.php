@@ -18,4 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::GET('/students/pagination/','App\Http\Controllers\StudentController@pagination');
+
 Route::resource('/students',StudentController::class);

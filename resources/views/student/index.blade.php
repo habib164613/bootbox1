@@ -27,7 +27,7 @@
 
                             @forelse($students as $key=> $student)
                             <tr>
-                                <th>{{++ $key}}</th>
+                                <th>{{$student->id}}</th>
                                 <td>{{$student->name}}</td>
                                 <td>{{$student->email}}</td>
                                 <td>
@@ -42,17 +42,21 @@
                                     <form action="{{route('students.destroy',$student->id)}}" method="post" class="d-inline deletForm">
                                         @csrf
                                         @method('DELETE')
-                                        <a  class="btn btn-danger" href=""><i class="fa-regular fa-trash-can"></i></a>
+                                        <a class="btn btn-danger" href=""><i class="fa-regular fa-trash-can"></i></a>
                                     </form>
 
                                 </td>
                             </tr>
                             @empty
+                            <tr>
+                                <td colspan="5" class="text-danger">No Data</td>
+                            </tr>
 
                             @endforelse
 
                         </tbody>
                     </table>
+                    {{ $students->links() }}
                 </div>
             </div>
         </div>
@@ -107,7 +111,7 @@
         $(document).on('submit', formId, function(e) {
             e.preventDefault();
 
-            formUrl= $(this).attr('action');
+            //formUrl= $(this).attr('action');
 
             let formdata = new FormData($(formId)[0]);
 
@@ -147,8 +151,8 @@
         $(document).on('click', '.deletForm', function(e) {
             e.preventDefault();
 
-            let deleteUrl= $(this).attr('action')
-            let csrf     = $(this).find('input[name="_token"]').val();
+            let deleteUrl = $(this).attr('action')
+            let csrf = $(this).find('input[name="_token"]').val();
 
             bootbox.confirm({
                 message: 'This is a confirm with custom button text and color! Do you like it?',
@@ -156,27 +160,47 @@
                     confirm: {
                         label: 'Yes',
                         className: 'btn-success'
-                    }, 
+                    },
                     cancel: {
                         label: 'No',
                         className: 'btn-danger'
                     }
                 },
                 callback: function(result) {
-                   if (result) {
-                   
-                    alert(deleteUrl);
-                    $.ajax({
-                        type: "POST",
-                        url: deleteUrl,
-                        data: {'_token':csrf, '_method':'DELETE'},
-                        dataType: "dataType",
-                        success: function (response) {
-                            
-                        }
-                    });
-                    
-                   }
+                    if (result) {
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: deleteUrl,
+                            data: {
+                                '_token': csrf,
+                                '_method': 'DELETE'
+                            },
+                            dataType: "dataType",
+                            success: function(response) {
+
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        });
+
+        //pagination
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+
+            $.ajax({
+                type: "GET",
+                url: "students/pagination/?page=" + page,
+                success: function(res) {
+                    console.log(page)
+                    $('.table-parent-div').html(res);
+
                 }
             });
 
